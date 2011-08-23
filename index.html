@@ -1,0 +1,48 @@
+<!doctype>
+<html>
+    <head>
+        <script src="js/backbone/test/vendor/jquery-1.5.js"></script>
+        <script src="js/backbone/test/vendor/underscore-1.1.6.js"></script>
+        <script src="js/backbone/backbone.js"></script>
+        <script src="js/computer-science-in-javascript/data-structures/binary-search-tree/binary-search-tree.js"></script>
+        <style>
+            form, fieldset, button {
+                padding:10px;
+                border:none;
+            }
+            input[type=text] {
+                width:200px;
+                padding:3px;
+            }
+            legend {
+                
+            }
+        </style>
+    </head>
+    <body>
+        <form>
+            <legend>Tree Generation</legend>
+            <fieldset>
+                <p>Enter some numbers (comma separated)</p>
+                <input type="text" />
+                <button id="" type="submit">I'm done</button>
+            </fieldset>
+            <fieldset>
+                <button id="quickTree" type="submit">Generate A Tree with Random Numbers</button>
+            </fieldset>
+        </form>
+        <form>
+            <legend>Traversals</legend>
+            <fieldset>
+                <button id="preOrder">Pre Order</button>
+                <button id="inOrder">In Order</button>
+                <button id="postOrder">Post Order</button>
+            </fieldset>
+        </form>
+        <h1>Traversal Output</h1>
+        <p id="traversalOutput"></p>
+        <canvas id="canvas" width="1024px" height="768px">
+
+        </canvas>
+    </body>
+</html>
