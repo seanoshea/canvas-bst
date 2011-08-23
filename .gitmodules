@@ -4,3 +4,6 @@
 [submodule "js/computer-science-in-javascript"]
 	path = js/computer-science-in-javascript
 	url = git@github.com:seanoshea/computer-science-in-javascript.git
+[submodule "css/oocss"]
+	path = css/oocss
+	url = https://github.com/stubbornella/oocss.git

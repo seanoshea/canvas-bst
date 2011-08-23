@@ -1,48 +1,73 @@
 <!doctype>
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" media="all" href="css/oocss/core/core.css" />
+        <link rel="stylesheet" type="text/css" media="all" href="css/oocss/core/content.css" />
+        <link rel="stylesheet" type="text/css" media="all" href="css/oocss/core/grid/grids.css" />
+        <link rel="stylesheet" type="text/css" media="all" href="css/oocss/core/spacing/space.css" />
         <script src="js/backbone/test/vendor/jquery-1.5.js"></script>
         <script src="js/backbone/test/vendor/underscore-1.1.6.js"></script>
         <script src="js/backbone/backbone.js"></script>
         <script src="js/computer-science-in-javascript/data-structures/binary-search-tree/binary-search-tree.js"></script>
         <style>
-            form, fieldset, button {
-                padding:10px;
-                border:none;
+            button {
+                cursor:hand;
+            }
+            hr {
+                border:1px solid #CCC;
+            }
+            .dimmed button {
+                cursor:default;
             }
             input[type=text] {
                 width:200px;
                 padding:3px;
             }
-            legend {
-                
+            .dimmed {
+                opacity:0.5;
+            }
+            .canvas {
+                border:1px solid #2b2b2b;
+            }
+            h1, .h1 {
+                color:#2b2b2b;
             }
         </style>
     </head>
-    <body>
-        <form>
-            <legend>Tree Generation</legend>
-            <fieldset>
+    <body class="line">
+        <div id="controls" class="unit size1of3 ptl">
+            <form class="pll">
+                <legend class="h1">Tree Generation</legend>
                 <p>Enter some numbers (comma separated)</p>
-                <input type="text" />
-                <button id="" type="submit">I'm done</button>
-            </fieldset>
-            <fieldset>
-                <button id="quickTree" type="submit">Generate A Tree with Random Numbers</button>
-            </fieldset>
-        </form>
-        <form>
-            <legend>Traversals</legend>
-            <fieldset>
-                <button id="preOrder">Pre Order</button>
-                <button id="inOrder">In Order</button>
-                <button id="postOrder">Post Order</button>
-            </fieldset>
-        </form>
-        <h1>Traversal Output</h1>
-        <p id="traversalOutput"></p>
-        <canvas id="canvas" width="1024px" height="768px">
+                <fieldset class="mll">
+                    <input type="text" value="1,5,3,31,9,8,6,16,12,90,45,30,42"/>
+                    <button id="numbers" type="submit" class="pam">I'm done</button>
+                </fieldset>
+                <p>OR</p>
+                <fieldset class="mll">
+                    <button id="quickTree" type="submit" class="pam">Generate A Tree with Random Numbers</button>
+                </fieldset>
+                <hr />
+                <fieldset class="mll">
+                    <button id="reset" type="reset" class="pam">Reset the Tree</button>
+                </fieldset>
+            </form>
+            <form class="pll ptl dimmed">
+                <legend class="h1">Traversals</legend>
+                <p>Click any of these buttons to see a traversal on the BST you just generated.</p>
+                <fieldset class="mll">
+                    <button id="preOrder" class="pam">Pre-Order</button>
+                    <button id="inOrder" class="pam">In-Order</button>
+                    <button id="postOrder" class="pam">Post-Order</button>
+                </fieldset>
+            </form>
+        </div>
+        <div id="output" class="unit size2of3">
+            <h1 class="ptm">Traversal Output</h1>
+            <p id="traversalOutput" class="mll">Your traversal output will appear here</p>
+            <canvas id="canvas" width="600px" height="600px" class="canvas mll">
 
-        </canvas>
+            </canvas>
+        </div>
     </body>
 </html>
