@@ -1,0 +1,6 @@
+[submodule "js/backbone"]
+	path = js/backbone
+	url = https://github.com/documentcloud/backbone.git
+[submodule "js/computer-science-in-javascript"]
+	path = js/computer-science-in-javascript
+	url = git@github.com:seanoshea/computer-science-in-javascript.git
