@@ -23,6 +23,7 @@
                       'click #quickTree': 'quickTreeClicked',
                       'click #reset': 'resetClicked'
                     },
+                    _tree: null,
 
                     initialize: function() {
                         this.preOrderButton = this.$('#preOrder');
@@ -49,10 +50,12 @@
                     },
 
                     numbersClicked: function(evt) {
+                        this._drawTree(document.getElementById('userEnteredNumbers').value.split(','));
                         return false;
                     },
 
-                    quickTreeClicked: function() {
+                    quickTreeClicked: function(evt) {
+                        this._drawTree([1, 7, 3, 99, 8, 55, 44, 33, 22, 11, 16, 84, 91, 2]);
                         return false;
                     },
 
@@ -69,6 +72,13 @@
                         $.each(["preOrder", "postOrder", "inOrder"], function() {
                             $("#" + this).attr("disabled", enable ? "" : "true");
                         });
+                    },
+
+                    _drawTree: function(arr) {
+                        this._tree = new BinarySearchTree();
+                        _.each(arr, function(item) {
+                            this._tree.add(item);
+                        }, this);
                     }
                 });
                 window.App = new AppView;
@@ -105,7 +115,7 @@
                 <legend class="h1">Tree Generation</legend>
                 <p>Enter some numbers (comma separated)</p>
                 <fieldset class="mll">
-                    <input type="text" value="1,5,3,31,9,8,6,16,12,90,45,30,42"/>
+                    <input id="userEnteredNumbers" type="text" value="1,5,3,31,9,8,6,16,12,90,45,30,42"/>
                     <button id="numbers" type="submit" class="pam">I'm done</button>
                 </fieldset>
                 <p>OR</p>
