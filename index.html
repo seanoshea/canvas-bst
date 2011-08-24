@@ -9,6 +9,71 @@
         <script src="js/backbone/test/vendor/underscore-1.1.6.js"></script>
         <script src="js/backbone/backbone.js"></script>
         <script src="js/computer-science-in-javascript/data-structures/binary-search-tree/binary-search-tree.js"></script>
+        <script>
+            $(function() {
+                window.AppView = Backbone.View.extend({
+
+                    el: $('body'),
+
+                    events: {
+                      'click #preOrder': 'preOrderClicked',
+                      'click #inOrder': 'inOrderClicked',
+                      'click #postOrder': 'postOrderClicked',
+                      "click #numbers": "numbersClicked",
+                      'click #quickTree': 'quickTreeClicked',
+                      'click #reset': 'resetClicked'
+                    },
+
+                    initialize: function() {
+                        this.preOrderButton = this.$('#preOrder');
+                        this.inOrderButton = this.$('#inOrder');
+                        this.postOrderButton = this.$('#postOrder');
+                        this.traversalOutput = this.$('#traversalOutput');
+                        this.traversalOptions = this.$('#traversalOptions');
+                        this.numbersButton = this.$('#numbers');
+                        this.quickTreeButton = this.$('#quickTree');
+                        this.resetButton = this.$('#reset');
+                        this.toggleTraversalOptions();
+                    },
+
+                    preOrderClicked: function() {
+                        return false;
+                    },
+
+                    inOrderClicked: function() {
+                        return false;
+                    },
+
+                    postOrderClicked: function() {
+                        return false;
+                    },
+
+                    numbersClicked: function(evt) {
+                        return false;
+                    },
+
+                    quickTreeClicked: function() {
+                        return false;
+                    },
+
+                    resetClicked: function() {
+                        return false;
+                    },
+
+                    toggleTraversalOptions: function(enable) {
+                        if (enable) {
+                            this.traversalOptions.addClass('dimmed');
+                        } else {
+                            this.traversalOptions.addClass('dimmed');
+                        }
+                        $.each(["preOrder", "postOrder", "inOrder"], function() {
+                            $("#" + this).attr("disabled", enable ? "" : "true");
+                        });
+                    }
+                });
+                window.App = new AppView;
+            });
+        </script>
         <style>
             button {
                 cursor:hand;
@@ -52,7 +117,7 @@
                     <button id="reset" type="reset" class="pam">Reset the Tree</button>
                 </fieldset>
             </form>
-            <form class="pll ptl dimmed">
+            <form id="traversalOptions" class="pll ptl">
                 <legend class="h1">Traversals</legend>
                 <p>Click any of these buttons to see a traversal on the BST you just generated.</p>
                 <fieldset class="mll">
