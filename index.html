@@ -24,6 +24,10 @@
                       'click #reset': 'resetClicked'
                     },
                     _tree: null,
+                    xDistance: 20,
+                    yDistance: 30,
+                    canvasNode: null,
+                    canvasContext: null,
 
                     initialize: function() {
                         this.preOrderButton = this.$('#preOrder');
@@ -35,6 +39,8 @@
                         this.quickTreeButton = this.$('#quickTree');
                         this.resetButton = this.$('#reset');
                         this.toggleTraversalOptions();
+                        this.canvasNode = document.getElementById('canvas');
+                        this.canvasContext = this.canvasNode.getContext('2d');
                     },
 
                     preOrderClicked: function() {
@@ -50,26 +56,36 @@
                     },
 
                     numbersClicked: function(evt) {
+                        this.resetClicked(evt);
                         this._drawTree(document.getElementById('userEnteredNumbers').value.split(','));
+                        this.toggleTraversalOptions(true);
                         return false;
                     },
 
                     quickTreeClicked: function(evt) {
+                        this.resetClicked(evt);
                         this._drawTree([1, 7, 3, 99, 8, 55, 44, 33, 22, 11, 16, 84, 91, 2]);
+                        this.toggleTraversalOptions(true);
                         return false;
                     },
 
-                    resetClicked: function() {
+                    resetClicked: function(evt) {
+                        evt.preventDefault();
+                        this.canvasContext.clearRect(0, 0, this.canvasNode.width, this.canvasNode.height);
+                        var w = canvas.width;
+                        canvas.width = 1;
+                        canvas.width = w;
+                        this.toggleTraversalOptions();
                         return false;
                     },
 
                     toggleTraversalOptions: function(enable) {
                         if (enable) {
-                            this.traversalOptions.addClass('dimmed');
+                            this.traversalOptions.removeClass('dimmed');
                         } else {
                             this.traversalOptions.addClass('dimmed');
                         }
-                        $.each(["preOrder", "postOrder", "inOrder"], function() {
+                        $.each(["preOrder", "postOrder", "inOrder", "reset"], function() {
                             $("#" + this).attr("disabled", enable ? "" : "true");
                         });
                     },
@@ -79,6 +95,73 @@
                         _.each(arr, function(item) {
                             this._tree.add(item);
                         }, this);
+                        this._drawNode(this._tree._root, 300, 40, 0, 0);
+                        if (this._tree._root.left) {
+                            this._drawLeft(this._tree._root.left, 300, 40);
+                        }
+                        if (this._tree._root.right) {
+                            this._drawRight(this._tree._root.right, 300, 40);
+                        }
+                    },
+
+                    _drawNode: function(node, x, y, px, py) {
+                        this._drawCircle();
+                        this._drawLine(x, y, px, py);
+                        this._drawLabel(node, x, y);
+                    },
+
+                    _drawLeft: function(node, px, py) {
+                        var count = 0, x, y;
+                        if (node.right) {
+                            count = 1 + this._tree.numChildren(node.right);
+                        }
+                        x = px - this.xDistance - (count * this.xDistance);
+                        y = py + this.yDistance;
+                        this._drawNode(node, x, y, px, py);
+                        if (node.left) {
+                            this._drawLeft(node.left, x, y);
+                        }
+                        if (node.right) {
+                            this._drawRight(node.right, x, y);
+                        }
+                    },
+
+                    _drawRight: function(node, px, py) {
+                        var count = 0, x, y;
+                        if (node.left) {
+                            count = 1 + this._tree.numChildren(node.left);
+                        }
+                        x = px + this.xDistance + (count * this.xDistance);
+                        y = py + this.yDistance;
+                        this._drawNode(node, x, y, px, py);
+                        if (node.left) {
+                            this._drawLeft(node.left, x, y);
+                        }
+                        if (node.right) {
+                            this._drawRight(node.right, x, y);
+                        }
+                    },
+
+                    _drawCircle: function() {
+
+                    },
+
+                    _drawLine: function(x, y, px, py) {
+                        if (px == 0 && py == 0) {
+                            return;
+                        }
+                        this.canvasContext.beginPath();
+                        this.canvasContext.strokeStyle = "rgb(120,120,120)";
+                        this.canvasContext.moveTo(px, py);
+                        this.canvasContext.lineTo(x, y);
+                        this.canvasContext.stroke();
+                    },
+
+                    _drawLabel: function(node, x, y) {
+                        this.canvasContext.beginPath();
+                        this.canvasContext.font = "11px sans-serif";
+                        this.canvasContext.fillText(node.value, x + 7, y + 5);
+                        this.canvasContext.stroke();
                     }
                 });
                 window.App = new AppView;
