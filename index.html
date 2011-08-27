@@ -21,13 +21,15 @@
                       'click #postOrder': 'postOrderClicked',
                       "click #numbers": "numbersClicked",
                       'click #quickTree': 'quickTreeClicked',
-                      'click #reset': 'resetClicked'
+                      'click #reset': 'resetClicked',
+                      'click #cancel': 'cancelClicked',
                     },
                     _tree: null,
                     xDistance: 20,
                     yDistance: 30,
                     canvasNode: null,
                     canvasContext: null,
+                    timeouts: [],
 
                     initialize: function() {
                         this.preOrderButton = this.$('#preOrder');
@@ -43,15 +45,18 @@
                         this.canvasContext = this.canvasNode.getContext('2d');
                     },
 
-                    preOrderClicked: function() {
+                    preOrderClicked: function(evt) {
+                        this._orderClicked(evt, 'preOrder');
                         return false;
                     },
 
-                    inOrderClicked: function() {
+                    inOrderClicked: function(evt) {
+                        this._orderClicked(evt, 'inOrder');
                         return false;
                     },
 
-                    postOrderClicked: function() {
+                    postOrderClicked: function(evt) {
+                        this._orderClicked(evt, 'postOrder');
                         return false;
                     },
 
@@ -59,23 +64,30 @@
                         this.resetClicked(evt);
                         this._drawTree(document.getElementById('userEnteredNumbers').value.split(','));
                         this.toggleTraversalOptions(true);
+                        this.toggleCancelTraversal();
                         return false;
                     },
 
                     quickTreeClicked: function(evt) {
                         this.resetClicked(evt);
-                        this._drawTree([1, 7, 3, 99, 8, 55, 44, 33, 22, 11, 16, 84, 91, 2]);
+                        var arr = [];
+                        for (var i = 0; i < 25; i++) {
+                            arr.push(parseInt(Math.random() * (999 - 1) + 1, 10));
+                        }
+                        this._drawTree(arr);
                         this.toggleTraversalOptions(true);
+                        this.toggleCancelTraversal();
                         return false;
                     },
 
                     resetClicked: function(evt) {
                         evt.preventDefault();
                         this.canvasContext.clearRect(0, 0, this.canvasNode.width, this.canvasNode.height);
-                        var w = canvas.width;
-                        canvas.width = 1;
-                        canvas.width = w;
+                        var w = this.canvasNode.width;
+                        this.canvasNode.width = 1;
+                        this.canvasNode.width = w;
                         this.toggleTraversalOptions();
+                        this.traversalOutput[0].innerHTML = "Your traversal output will appear here"
                         return false;
                     },
 
@@ -85,9 +97,26 @@
                         } else {
                             this.traversalOptions.addClass('dimmed');
                         }
-                        $.each(["preOrder", "postOrder", "inOrder", "reset"], function() {
+                        $.each(["preOrder", "postOrder", "inOrder", "reset", "cancel", "speed"], function() {
                             $("#" + this).attr("disabled", enable ? "" : "true");
                         });
+                    },
+
+                    cancelClicked: function(evt) {
+                        var scope = this;
+                        evt.preventDefault();
+                        this.timeouts.forEach(function(t) {
+                            clearTimeout(t);
+                        });
+                        this.timeouts = [];
+                        this.traversalOutput[0].innerHTML = "Your traversal output will appear here";
+                        this._tree.traverse(function(node) {
+                            scope._drawCircle(node.x, node.y);
+                        });
+                    },
+
+                    toggleCancelTraversal: function(enable) {
+                        $("#cancel").attr("disabled", enable ? "" : "true");
                     },
 
                     _drawTree: function(arr) {
@@ -95,17 +124,19 @@
                         _.each(arr, function(item) {
                             this._tree.add(item);
                         }, this);
-                        this._drawNode(this._tree._root, 300, 40, 0, 0);
+                        this._drawNode(this._tree._root, 450, 40, 0, 0);
                         if (this._tree._root.left) {
-                            this._drawLeft(this._tree._root.left, 300, 40);
+                            this._drawLeft(this._tree._root.left, 450, 40);
                         }
                         if (this._tree._root.right) {
-                            this._drawRight(this._tree._root.right, 300, 40);
+                            this._drawRight(this._tree._root.right, 450, 40);
                         }
                     },
 
                     _drawNode: function(node, x, y, px, py) {
-                        this._drawCircle();
+                        node.x = x;
+                        node.y = y;
+                        this._drawCircle(x, y);
                         this._drawLine(x, y, px, py);
                         this._drawLabel(node, x, y);
                     },
@@ -142,8 +173,27 @@
                         }
                     },
 
-                    _drawCircle: function() {
+                    _orderClicked: function(evt, order) {
+                        this.cancelClicked(evt);
+                        var counter = 0, scope = this, output = "", div = scope.traversalOutput[0],
+                        multiplier = document.getElementById('speed').value + 1;
+                        this._tree.traverse(function(node) {
+                            scope._drawCircle(node.x, node.y);
+                            scope.timeouts.push(setTimeout(function() {
+                                scope._drawCircle(node.x, node.y, "rgb(34, 139, 34)");
+                                output += node.value + " ";
+                                div.innerHTML = output;
+                            }, counter === 0 ? 1 : 100 * multiplier * counter));
+                            counter++;
+                        }, order);
+                        this.toggleCancelTraversal(true);
+                    },
 
+                    _drawCircle: function(x, y, color) {
+                        this.canvasContext.beginPath();
+                        this.canvasContext.arc(x, y, 5, 0, Math.PI*2, true);
+                        this.canvasContext.fillStyle = color || "rgb(120,120,120)";
+                        this.canvasContext.fill();
                     },
 
                     _drawLine: function(x, y, px, py) {
@@ -160,6 +210,7 @@
                     _drawLabel: function(node, x, y) {
                         this.canvasContext.beginPath();
                         this.canvasContext.font = "11px sans-serif";
+                        this.canvasContext.fillStyle = "rgb(000,000,000)";
                         this.canvasContext.fillText(node.value, x + 7, y + 5);
                         this.canvasContext.stroke();
                     }
@@ -169,13 +220,10 @@
         </script>
         <style>
             button {
-                cursor:hand;
+                cursor:pointer;
             }
-            hr {
-                border:1px solid #CCC;
-            }
-            .dimmed button {
-                cursor:default;
+            button.dimmed {
+                cursor:auto;
             }
             input[type=text] {
                 width:200px;
@@ -199,13 +247,13 @@
                 <p>Enter some numbers (comma separated)</p>
                 <fieldset class="mll">
                     <input id="userEnteredNumbers" type="text" value="1,5,3,31,9,8,6,16,12,90,45,30,42"/>
-                    <button id="numbers" type="submit" class="pam">I'm done</button>
+                    <button id="numbers" type="submit" class="pam">Generate</button>
                 </fieldset>
                 <p>OR</p>
                 <fieldset class="mll">
                     <button id="quickTree" type="submit" class="pam">Generate A Tree with Random Numbers</button>
                 </fieldset>
-                <hr />
+                <p>OR</p>
                 <fieldset class="mll">
                     <button id="reset" type="reset" class="pam">Reset the Tree</button>
                 </fieldset>
@@ -218,12 +266,20 @@
                     <button id="inOrder" class="pam">In-Order</button>
                     <button id="postOrder" class="pam">Post-Order</button>
                 </fieldset>
+                <fieldset class="mll mtm">
+                    <label>Control Traversal Speed</label>
+                    <input id="speed" type="range" min="0" max="5" value="1" />
+                </fieldset>
+                <p>OR</p>
+                <fieldset class="mlm mtm">
+                    <button id="cancel" class="pam" type="cancel">Cancel Traversal</button>
+                </fieldset>
             </form>
         </div>
         <div id="output" class="unit size2of3">
             <h1 class="ptm">Traversal Output</h1>
             <p id="traversalOutput" class="mll">Your traversal output will appear here</p>
-            <canvas id="canvas" width="600px" height="600px" class="canvas mll">
+            <canvas id="canvas" width="900px" height="600px" class="canvas mll">
 
             </canvas>
         </div>
