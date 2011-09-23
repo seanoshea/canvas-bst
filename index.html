@@ -19,6 +19,7 @@
                       'click #preOrder': 'preOrderClicked',
                       'click #inOrder': 'inOrderClicked',
                       'click #postOrder': 'postOrderClicked',
+                      'click #breadthFirst': 'breadthFirstClicked',
                       "click #numbers": "numbersClicked",
                       'click #quickTree': 'quickTreeClicked',
                       'click #reset': 'resetClicked',
@@ -60,6 +61,23 @@
                         return false;
                     },
 
+                    breadthFirstClicked: function(evt) {
+                        this.cancelClicked(evt);
+                        var counter = 0, scope = this, output = "", div = scope.traversalOutput[0],
+                        multiplier = document.getElementById('speed').value + 1;
+                        this._tree.breadthFirstTraversal(function(node) {
+                            scope._drawCircle(node.x, node.y);
+                            scope.timeouts.push(setTimeout(function() {
+                                scope._drawCircle(node.x, node.y, "rgb(34, 139, 34)");
+                                output += node.value + " ";
+                                div.innerHTML = output;
+                            }, counter === 0 ? 1 : 100 * multiplier * counter));
+                            counter++;
+                        });
+                        this.toggleCancelTraversal(true);
+                        return false;
+                    },
+
                     numbersClicked: function(evt) {
                         this.resetClicked(evt);
                         this._drawTree(document.getElementById('userEnteredNumbers').value.split(','));
@@ -97,7 +115,7 @@
                         } else {
                             this.traversalOptions.addClass('dimmed');
                         }
-                        $.each(["preOrder", "postOrder", "inOrder", "reset", "cancel", "speed"], function() {
+                        $.each(["preOrder", "postOrder", "inOrder", "breadthFirst", "reset", "cancel", "speed"], function() {
                             $("#" + this).attr("disabled", enable ? "" : "true");
                         });
                     },
@@ -265,6 +283,7 @@
                     <button id="preOrder" class="pam">Pre-Order</button>
                     <button id="inOrder" class="pam">In-Order</button>
                     <button id="postOrder" class="pam">Post-Order</button>
+                    <button id="breadthFirst" class="pam">Breadth First</button>
                 </fieldset>
                 <fieldset class="mll mtm">
                     <label>Control Traversal Speed</label>
